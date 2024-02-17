@@ -1,20 +1,19 @@
-import {Reflect} from '@rocicorp/reflect/client';
-import {nanoid} from 'nanoid';
-import React, {useEffect} from 'react';
-import ReactDOM from 'react-dom/client';
-import {randUserInfo} from './client-state.js';
-import CursorField from './cursor-field.js';
-import styles from './index.module.css';
-import {mutators} from './mutators.js';
-import {useCount} from './subscriptions.js';
+import { Reflect } from "@rocicorp/reflect/client";
+import { nanoid } from "nanoid";
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import { randUserInfo } from "./client-state.js";
+import CursorField from "./cursor-field.js";
+import styles from "./index.module.css";
+import { mutators } from "./mutators.js";
+import { useCount } from "./subscriptions.js";
 
 const userID = nanoid();
-const roomID = 'my-room';
-const incrementKey = 'count';
+const roomID = "my-room";
 
 const server: string | undefined = import.meta.env.VITE_REFLECT_URL;
 if (!server) {
-  throw new Error('VITE_REFLECT_URL required');
+  throw new Error("VITE_REFLECT_URL required");
 }
 
 const r = new Reflect({
@@ -34,10 +33,10 @@ function App() {
   }, []);
 
   const handleButtonClick = () => {
-    void r.mutate.increment({key: incrementKey, delta: 1});
+    void r.mutate.increment();
   };
 
-  const count = useCount(r, incrementKey);
+  const count = useCount(r, "evenCount");
 
   // Render app.
   return (
@@ -52,15 +51,15 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 if (rootElement === null) {
-  throw new Error('root element is null');
+  throw new Error("root element is null");
 }
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 if (import.meta.hot) {
