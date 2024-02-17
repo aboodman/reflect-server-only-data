@@ -1,7 +1,10 @@
-import type {AuthHandler, ReflectServerOptions} from '@rocicorp/reflect/server';
-import {M, mutators} from '../mutators.js';
+import type {
+  AuthHandler,
+  ReflectServerOptions,
+} from "@rocicorp/reflect/server";
+import { M, mutators } from "../mutators.js";
 
-const authHandler: AuthHandler = (auth: string, _roomID: string) => {
+const authHandler: AuthHandler = (auth: string, roomID: string) => {
   if (auth) {
     // A real implementation could:
     // 1. if using session auth make a fetch call to a service to
@@ -12,6 +15,8 @@ const authHandler: AuthHandler = (auth: string, _roomID: string) => {
     // to access the room with roomID.
     return {
       userID: auth,
+      // Hack, WriteTransaction should really expose this, but oh well.
+      roomID,
     };
   }
   return null;
@@ -21,8 +26,8 @@ function makeOptions(): ReflectServerOptions<M> {
   return {
     mutators,
     authHandler,
-    logLevel: 'debug',
+    logLevel: "debug",
   };
 }
 
-export {makeOptions as default};
+export { makeOptions as default };

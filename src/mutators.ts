@@ -27,18 +27,36 @@ export const mutators = {
 
 export type M = typeof mutators;
 
-const serverData = {
-  count: 0,
+type GameState = {
+  count: number;
 };
+
+type AuthData = {
+  userID: string;
+  roomID: string;
+};
+
+// It is possible for the js global scope to be reused for multiple rooms
+// within one Reflect customer org, so we scope the game state to roomID.
+// roomID -> GameState
+const serverData: Map<string, GameState> = new Map();
 
 async function increment(tx: WriteTransaction) {
   if (tx.location !== "server") {
     return;
   }
   console.log(`incrementing`);
-  serverData.count++;
-  if (serverData.count % 2 === 0) {
-    tx.set("evenCount", serverData.count);
+
+  const userData = tx.auth as AuthData;
+  let gameState = serverData.get(userData.roomID);
+  if (!gameState) {
+    gameState = { count: 0 };
+    serverData.set(userData.roomID, gameState);
+  }
+  gameState.count++;
+
+  if (gameState.count % 2 === 0) {
+    tx.set("evenCount", gameState.count);
   }
 }
 
